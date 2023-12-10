@@ -10,32 +10,34 @@
                 <x-back-link href="{{ route('blog') }}" />
             </x-slot>
 
-            @if (Auth::id() == $post->user_id 
-                || Auth::user()->role_id == 'admin'
-                || Auth::user()->role_id == 'moderator')
-            
-            <x-slot name="right">
-                @if (Auth::id() == $post->user_id)
-                    <x-button-link href="{{ route('user.posts.edit', $post->id) }}">
-                        {{ __('Изменить') }}
-                    </x-button-link>
+            @auth
+                @if (Auth::id() == $post->user_id 
+                    || Auth::user()->role_id == 'admin'
+                    || Auth::user()->role_id == 'moderator')
+                
+                <x-slot name="right">
+                    @if (Auth::id() == $post->user_id)
+                        <x-button-link href="{{ route('user.posts.edit', $post->id) }}">
+                            {{ __('Изменить') }}
+                        </x-button-link>
+                    @endif
+
+                    <x-button type="button" class="bg-danger border-danger" data-bs-toggle="modal" data-bs-target="#confirmationModal_deletePost{{ $post->id }}">
+                        {{ __('Удалить') }}
+                    </x-button>
+
+                    <x-modal method="DELETE"
+                            action="{{ route('user.posts.delete', $post->id) }}" 
+                            id="confirmationModal_deletePost{{ $post->id }}"
+                            button-text="Удалить">
+
+                        <div>
+                            {{ __('Вы действительно хотите удалить статью?') }}
+                        </div>
+                    </x-modal>
+                </x-slot>
                 @endif
-
-                <x-button type="button" class="bg-danger border-danger" data-bs-toggle="modal" data-bs-target="#confirmationModal_deletePost{{ $post->id }}">
-                    {{ __('Удалить') }}
-                </x-button>
-
-                <x-modal method="DELETE"
-                        action="{{ route('user.posts.delete', $post->id) }}" 
-                        id="confirmationModal_deletePost{{ $post->id }}"
-                        button-text="Удалить">
-
-                    <div>
-                        {{ __('Вы действительно хотите удалить статью?') }}
-                    </div>
-                </x-modal>
-            </x-slot>
-        @endif
+            @endauth
 
             <h2 class="h4 col-md-12 col-sm-12 mb-1">
                 <div class="row">
